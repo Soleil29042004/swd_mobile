@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:swd_mobile/pages/login.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -12,17 +13,25 @@ class _HomePageState extends State<HomePage> {
   final List<Widget> tabs = [
     const Center(child: Text('Home', style: TextStyle(fontSize: 24))),
     const Center(child: Text('Search', style: TextStyle(fontSize: 24))),
-    const Center(child: Text('Mail', style: TextStyle(fontSize: 24))),
     const Center(child: Text('Profile', style: TextStyle(fontSize: 24))),
+    const Center(child: Text('Logging out...', style: TextStyle(fontSize: 24))), // Placeholder for logout
   ];
 
   Map<String, bool> _drawerSectionState = {
-    "Overview": false,
+    "Home": false,
     "Supplier Transactions": false,
     "Internal Transactions": false,
     "Sales Transactions": false,
     "Inventory Management": false,
   };
+
+  void _handleLogout() {
+    // Navigate back to LoginPage
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => LoginPage()),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -59,27 +68,25 @@ class _HomePageState extends State<HomePage> {
         padding: EdgeInsets.zero,
         children: [
           buildUserHeader(),
-          buildDrawerItem("Overview", Icons.dashboard, "Overview"),
-          buildCollapsibleSection("Supplier Transactions", Icons.store, [
-            buildSubMenu("Stock Out", Icons.upload),
-            buildSubMenu("Stock Out Documents", Icons.description),
-            buildSubMenu("Stock In", Icons.download),
-            buildSubMenu("Stock In Documents", Icons.assignment),
+          buildDrawerItem("Home", Icons.home, "Home"),
+          buildCollapsibleSection("Xuất-nhập ngoại", Icons.store, [
+            buildSubMenu("Phiếu xuất kho", Icons.upload),
+            buildSubMenu("Phiếu nhập kho", Icons.download),
           ]),
-          buildCollapsibleSection("Internal Transactions", Icons.sync_alt, [
-            buildSubMenu("Stock Out", Icons.upload),
-            buildSubMenu("Stock Out Orders", Icons.list_alt),
-            buildSubMenu("Stock In", Icons.download),
-            buildSubMenu("Stock In Orders", Icons.assignment),
+          buildCollapsibleSection("Xuất-nhập nội", Icons.sync_alt, [
+            buildSubMenu("Phiếu xuất kho", Icons.upload),
+            buildSubMenu("Phiếu nhập kho", Icons.download),
           ]),
-          buildCollapsibleSection("Sales Transactions", Icons.sell, [
-            buildSubMenu("Stock Out", Icons.upload),
-            buildSubMenu("Stock Out Documents", Icons.description),
-            buildSubMenu("Stock In", Icons.download),
-            buildSubMenu("Stock In Documents", Icons.assignment),
+          buildCollapsibleSection("Quản lý hàng hóa", Icons.warehouse, [
+            buildSubMenu("Thêm hàng hóa", Icons.upload),
+            buildSubMenu("Tìm hàng hóa", Icons.search),
+            buildSubMenu("Kiểm kê", Icons.check),
           ]),
-          const Divider(),
-          buildDrawerItem("Inventory Management", Icons.inventory, "Inventory Management"),
+          ListTile(
+            leading: const Icon(Icons.logout, color: Colors.red),
+            title: const Text("Logout", style: TextStyle(color: Colors.red)),
+            onTap: _handleLogout, // Call logout function
+          ),
         ],
       ),
     );
@@ -143,13 +150,17 @@ class _HomePageState extends State<HomePage> {
       items: const [
         BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
         BottomNavigationBarItem(icon: Icon(Icons.search), label: "Search"),
-        BottomNavigationBarItem(icon: Icon(Icons.mail), label: "Mail"),
         BottomNavigationBarItem(icon: Icon(Icons.person), label: "Profile"),
+        BottomNavigationBarItem(icon: Icon(Icons.logout), label: "Logout"),
       ],
       onTap: (index) {
-        setState(() {
-          _currentIndex = index;
-        });
+        if (index == 3) {
+          _handleLogout(); // Call logout function when Logout tab is clicked
+        } else {
+          setState(() {
+            _currentIndex = index;
+          });
+        }
       },
     );
   }
