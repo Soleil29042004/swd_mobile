@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:swd_mobile/pages/login.dart';
-import 'package:swd_mobile/pages/import.dart';
 import 'package:swd_mobile/components.dart';
 
 class HomePage extends StatefulWidget {
