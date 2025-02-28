@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "999904748547",
+    "project_id": "swd-pushnotif",
+    "storage_bucket": "swd-pushnotif.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:999904748547:android:b8588ec6f68e02df539a36",
+        "android_client_info": {
+          "package_name": "com.example.swd_mobile"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC7sz0yZOL02fBN6y8poGo6RMTN845pwn8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
