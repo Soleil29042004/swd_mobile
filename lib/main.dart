@@ -4,6 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:swd_mobile/api/firebase_api.dart';
 import 'package:swd_mobile/pages/login.dart';
 import 'package:flutter/foundation.dart';
+import 'package:swd_mobile/pages/notification.dart';
+
+final navigatorKey = GlobalKey<NavigatorState>();
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -35,9 +38,13 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(fontFamily: 'Poppins'),
-      home: LoginPage(),
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData(fontFamily: 'Poppins'),
+        home: LoginPage(),
+        navigatorKey: navigatorKey,
+        routes: {
+          'notification':(context) => const NotificationPage(),
+        }
     );
   }
 }

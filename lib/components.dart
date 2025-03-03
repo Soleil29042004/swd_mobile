@@ -20,6 +20,17 @@ AppBar buildAppBar(BuildContext context) {
         },
       ),
     ),
+    actions: [
+      IconButton(
+        icon: const Icon(Icons.notifications, color: Colors.white),
+        onPressed: () {
+          Navigator.pushNamed(
+            context,
+            '/notification', // Ensure this route is defined in your MaterialApp
+          );
+        },
+      ),
+    ],
   );
 }
 

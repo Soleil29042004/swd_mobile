@@ -25,8 +25,8 @@ class _ImportPageState extends State<ImportPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: buildAppBar(context), // Use the function from components.dart
-      drawer: buildNavigationDrawer(context, _drawerSectionState, setState), // Use the drawer function
+      appBar: buildAppBar(context),
+      drawer: buildNavigationDrawer(context, _drawerSectionState, setState),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -42,44 +42,83 @@ class _ImportPageState extends State<ImportPage> {
               ),
             ),
             const SizedBox(height: 16),
+            // Two buttons in a row with fixed styling like in the image
             Row(
-              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                ElevatedButton(
-                  onPressed: () {},
-                  style: ElevatedButton.styleFrom(backgroundColor: Colors.blue),
-                  child: const Text("+ Thêm hàng từ file ngoài"),
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: () {},
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF1A237E), // Deep blue color
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                    child: const Text(
+                      "+ Thêm hàng từ file ngoài",
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  ),
                 ),
-                const SizedBox(width: 16),
-                ElevatedButton(
-                  onPressed: () {},
-                  style: ElevatedButton.styleFrom(backgroundColor: Colors.blue),
-                  child: const Text("+ Thêm hàng từ hệ thống"),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: () {},
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF1A237E), // Deep blue color
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                    child: const Text(
+                      "+ Thêm hàng từ hệ thống",
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  ),
                 ),
               ],
             ),
             const SizedBox(height: 16),
             const Text("Thông tin chung", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
             const SizedBox(height: 8),
-            buildDropdownField("Nguồn nhận"), // Now available from components.dart
-            buildDropdownField("Mã nguồn"), // Now available from components.dart
-            buildTextField("Số điện thoại"), // Now available from components.dart
-            buildTextField("Địa chỉ", maxLines: 2), // Now available from components.dart
-            buildDropdownField("Mã phiếu", isDisabled: true), // Now available from components.dart
-            buildTextField("Lý do xuất", maxLines: 2), // Now available from components.dart
+            buildDropdownField("Nguồn nhận"),
+            buildDropdownField("Mã nguồn"),
+            buildTextField("Số điện thoại"),
+            buildTextField("Địa chỉ", maxLines: 2),
+            buildDropdownField("Mã phiếu", isDisabled: true),
+            buildTextField("Lý do xuất", maxLines: 2),
             const SizedBox(height: 16),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                ElevatedButton(
-                  onPressed: () {},
-                  style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-                  child: const Text("Hủy"),
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: () {},
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.red,
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                    child: const Text("Hủy", style: TextStyle(color: Colors.white)),
+                  ),
                 ),
-                ElevatedButton(
-                  onPressed: () {},
-                  style: ElevatedButton.styleFrom(backgroundColor: Colors.blue),
-                  child: const Text("Lưu"),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: () {},
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.blue,
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                    child: const Text("Lưu", style: TextStyle(color: Colors.white)),
+                  ),
                 ),
               ],
             ),
