@@ -2,9 +2,12 @@ import 'dart:html' as html; // Required for service worker registration (Web)
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:swd_mobile/api/firebase_api.dart';
+import 'package:swd_mobile/pages/home.dart';
 import 'package:swd_mobile/pages/login.dart';
 import 'package:flutter/foundation.dart';
 import 'package:swd_mobile/pages/notification.dart';
+import 'package:swd_mobile/pages/profile.dart';
+import 'package:swd_mobile/pages/inventory.dart';
 
 final navigatorKey = GlobalKey<NavigatorState>();
 
@@ -44,6 +47,10 @@ class MyApp extends StatelessWidget {
         navigatorKey: navigatorKey,
         routes: {
           'notification':(context) => const NotificationPage(),
+          '/login': (context) => LoginPage(),
+          '/home': (context) => HomePage(),
+          '/profile': (context) => ProfilePage(),
+          '/search': (context) => InvetoryScreen(),
         }
     );
   }

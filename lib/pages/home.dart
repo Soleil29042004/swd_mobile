@@ -30,12 +30,19 @@ class _HomePageState extends State<HomePage> {
       drawer: buildNavigationDrawer(context, _drawerSectionState, setState), // Use the drawer function
       body: tabs[_currentIndex], // Display the selected tab
       bottomNavigationBar: buildBottomNavigationBar(_currentIndex, (index) {
-        if (index == 3) {
-          handleLogout(context); // Call the function from components.dart
-        } else {
-          setState(() {
-            _currentIndex = index;
-          });
+        switch (index) {
+          case 0:
+            //Current page, do nothing
+            break;
+          case 1:
+            Navigator.pushReplacementNamed(context, '/search');
+            break;
+          case 2:
+            Navigator.pushReplacementNamed(context, '/profile');
+            break;
+          case 3:
+            handleLogout(context);
+            break;
         }
       }), // Use the bottom navigation bar function
     );

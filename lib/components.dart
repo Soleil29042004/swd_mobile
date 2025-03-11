@@ -3,6 +3,8 @@ import 'package:swd_mobile/pages/import.dart';
 import 'package:swd_mobile/pages/login.dart';
 import 'package:swd_mobile/pages/home.dart';
 import 'package:swd_mobile/pages/export.dart';
+import 'package:swd_mobile/pages/inventory.dart';
+import 'package:swd_mobile/pages/stock_check.dart';
 
 AppBar buildAppBar(BuildContext context) {
   return AppBar(
@@ -75,7 +77,7 @@ Drawer buildNavigationDrawer(BuildContext context, Map<String, bool> drawerSecti
 
 UserAccountsDrawerHeader buildUserHeader() {
   return const UserAccountsDrawerHeader(
-    accountName: Text("JadeHwang"),
+    accountName: Text("Jade Hwang"),
     accountEmail: null,
     currentAccountPicture: CircleAvatar(
       backgroundImage: AssetImage("assets/icons/profile.jpg"),
@@ -132,6 +134,18 @@ Widget buildSubMenu(String title, IconData icon, BuildContext context) {
             context,
             MaterialPageRoute(builder: (context) => const ExportPage()),
           );
+        }
+        else if (title == 'Kiểm kê'){
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => StockCheckMainScreen()),
+          );
+        }
+        else if (title == 'Tìm hàng hóa'){
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => InvetoryScreen()),
+          );
         };
       },
     ),
@@ -161,11 +175,13 @@ void handleLogout(BuildContext context) {
   );
 }
 
-Widget buildTextField(String label, {int maxLines = 1}) {
+Widget buildTextField(String label, {TextEditingController? controller, bool isPassword = false, int maxLines = 1}) {
   return Padding(
     padding: const EdgeInsets.symmetric(vertical: 8.0),
     child: TextField(
-      maxLines: maxLines,
+      controller: controller, // Now supports a text controller
+      obscureText: isPassword, // Now supports password fields
+      maxLines: isPassword ? 1 : maxLines, // Ensure password fields are single-line
       decoration: InputDecoration(
         labelText: label,
         border: OutlineInputBorder(),
