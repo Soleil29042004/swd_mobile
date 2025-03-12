@@ -10,7 +10,6 @@ import 'package:swd_mobile/pages/stock_check.dart';
 
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:shared_preferences/shared_preferences.dart';
 
 void navigateToStockCheck(BuildContext context) async {
   final authService = AuthService();
