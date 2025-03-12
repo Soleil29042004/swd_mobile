@@ -10,6 +10,7 @@ import 'package:swd_mobile/pages/profile.dart';
 import 'package:swd_mobile/pages/inventory.dart';
 
 final navigatorKey = GlobalKey<NavigatorState>();
+// Don't initialize here since we need auth token after login
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -19,7 +20,7 @@ Future<void> main() async {
       apiKey: "AIzaSyDTAw1LwpO9epN9Ad9iiyeH0kmMG6YGTcY",
       authDomain: "swd-pushnotif.firebaseapp.com",
       projectId: "swd-pushnotif",
-      storageBucket: "swd-pushnotif.appspot.com",  // Fixed storage bucket URL
+      storageBucket: "swd-pushnotif.appspot.com",
       messagingSenderId: "999904748547",
       appId: "1:999904748547:web:2b458b4e6c6cc671539a36",
     ),
@@ -55,5 +56,3 @@ class MyApp extends StatelessWidget {
     );
   }
 }
-
-

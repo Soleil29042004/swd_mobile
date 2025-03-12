@@ -19,15 +19,32 @@ class AuthService {
         }),
       );
 
+      print("Login API Response: ${response.body}"); // Debug API response
+
       if (response.statusCode == 200) {
         final Map<String, dynamic> data = jsonDecode(response.body);
 
-        // Save token and user info to SharedPreferences
-        await _saveUserData(data);
+        if (data.containsKey('result') && data['result'] != null) {
+          final Map<String, dynamic> result = data['result'];
+
+          if (result.containsKey('token') && result['token'] != null) {
+            print("Received Token: ${result['token']}"); // Debug print
+
+            // Save token and user info
+            await _saveUserData(result);
+
+            return {
+              'success': true,
+              'data': result,
+            };
+          } else {
+            print("Error: Token is missing inside result object");
+          }
+        }
 
         return {
-          'success': true,
-          'data': data,
+          'success': false,
+          'message': 'Invalid credentials or missing token',
         };
       } else {
         Map<String, dynamic>? errorData;
@@ -121,9 +138,10 @@ class AuthService {
     };
   }
 
-  // Logout
-  Future<void> logout() async {
+  Future<void> clearToken() async {
+    // Using shared preferences or secure storage
     final prefs = await SharedPreferences.getInstance();
-    await prefs.clear();
+    await prefs.remove('auth_token');
   }
+
 }

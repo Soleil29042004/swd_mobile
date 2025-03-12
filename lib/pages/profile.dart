@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:swd_mobile/components.dart';
+import 'package:swd_mobile/pages/home.dart';
+import 'package:swd_mobile/pages/inventory.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -129,21 +131,24 @@ class _ProfilePageState extends State<ProfilePage> {
           ),
         ),
       ),
-      bottomNavigationBar: buildBottomNavigationBar(_currentIndex, (index) {
-        switch (index) {
-          case 0:
-            Navigator.pushReplacementNamed(context, '/home');
-            break;
-          case 1:
-            Navigator.pushReplacementNamed(context, '/search');
-            break;
-          case 2:
-            break;
-          case 3:
-            handleLogout(context);
-            break;
-        }
-      }),
+      bottomNavigationBar: buildBottomNavigationBar(
+        context,
+        _currentIndex,
+            (index) {
+          setState(() {
+            _currentIndex = index;
+          });
+
+          // Handle navigation based on index
+          if (index == 0) {
+            Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage()));
+          } else if (index == 1) {
+            Navigator.push(context, MaterialPageRoute(builder: (context) => InvetoryScreen()));
+          } else if (index == 2) {
+          }
+          // Note: index 3 (logout) is already handled in the buildBottomNavigationBar function
+        },
+      ),
     );
   }
 }

@@ -58,6 +58,7 @@ class _LoginPageState extends State<LoginPage> {
       );
 
       if (result['success']) {
+        print("Received Token: ${result['data']['token']}");
         // Navigate to HomePage on successful login
         if (mounted) {
           Navigator.pushReplacement(

@@ -1,10 +1,33 @@
 import 'package:flutter/material.dart';
+import 'package:swd_mobile/api/auth_service.dart';
+import 'package:swd_mobile/api/stockcheck_api.dart';
 import 'package:swd_mobile/pages/import.dart';
 import 'package:swd_mobile/pages/login.dart';
 import 'package:swd_mobile/pages/home.dart';
 import 'package:swd_mobile/pages/export.dart';
 import 'package:swd_mobile/pages/inventory.dart';
 import 'package:swd_mobile/pages/stock_check.dart';
+
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
+
+void navigateToStockCheck(BuildContext context) async {
+  final authService = AuthService();
+  final token = await authService.getToken() ?? '';
+
+  final stockCheckApiService = StockCheckApiService(
+    baseUrl: 'http://localhost:8080', // Use same base URL as AuthService
+    token: token,
+  );
+
+  Navigator.push(
+    context,
+    MaterialPageRoute(
+      builder: (context) => StockCheckMainScreen(apiService: stockCheckApiService),
+    ),
+  );
+}
 
 AppBar buildAppBar(BuildContext context) {
   return AppBar(
@@ -52,11 +75,7 @@ Drawer buildNavigationDrawer(BuildContext context, Map<String, bool> drawerSecti
             );
           },
         ),
-        buildCollapsibleSection(context, "Xuất-nhập ngoại", Icons.store, [
-          buildSubMenu("Phiếu xuất kho", Icons.upload, context),
-          buildSubMenu("Phiếu nhập kho", Icons.download, context),
-        ], drawerSectionState, setStateCallback),
-        buildCollapsibleSection(context, "Xuất-nhập nội", Icons.sync_alt, [
+        buildCollapsibleSection(context, "Xuất-nhập kho", Icons.store, [
           buildSubMenu("Phiếu xuất kho", Icons.upload, context),
           buildSubMenu("Phiếu nhập kho", Icons.download, context),
         ], drawerSectionState, setStateCallback),
@@ -136,10 +155,7 @@ Widget buildSubMenu(String title, IconData icon, BuildContext context) {
           );
         }
         else if (title == 'Kiểm kê'){
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => StockCheckMainScreen()),
-          );
+          navigateToStockCheck(context);
         }
         else if (title == 'Tìm hàng hóa'){
           Navigator.push(
@@ -152,7 +168,7 @@ Widget buildSubMenu(String title, IconData icon, BuildContext context) {
   );
 }
 
-BottomNavigationBar buildBottomNavigationBar(int currentIndex, Function(int) onTap) {
+BottomNavigationBar buildBottomNavigationBar(BuildContext context, int currentIndex, Function(int) onTap) {
   return BottomNavigationBar(
     currentIndex: currentIndex,
     type: BottomNavigationBarType.fixed,
@@ -164,15 +180,52 @@ BottomNavigationBar buildBottomNavigationBar(int currentIndex, Function(int) onT
       BottomNavigationBarItem(icon: Icon(Icons.person), label: "Profile"),
       BottomNavigationBarItem(icon: Icon(Icons.logout), label: "Logout"),
     ],
-    onTap: onTap,
+    onTap: (index) {
+      if (index == 3) { // Logout button index
+        handleLogout(context);
+      } else {
+        onTap(index);
+      }
+    },
   );
 }
 
-void handleLogout(BuildContext context) {
-  Navigator.pushReplacement(
-    context,
-    MaterialPageRoute(builder: (context) => LoginPage()),
-  );
+void handleLogout(BuildContext context) async {
+  final authService = AuthService();
+  final token = await authService.getToken() ?? '';
+
+  // Call the logout API endpoint
+  try {
+    final response = await http.post(
+      Uri.parse('http://localhost:8080/auth/logout'),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode({
+        'token': token,
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      // Clear local token
+      await authService.clearToken();
+
+      // Navigate to login page
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => LoginPage()),
+      );
+    } else {
+      // Handle errors - maybe show a snackbar
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Logout failed: ${response.body}')),
+      );
+    }
+  } catch (e) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Logout error: $e')),
+    );
+  }
 }
 
 Widget buildTextField(String label, {TextEditingController? controller, bool isPassword = false, int maxLines = 1}) {
@@ -211,3 +264,4 @@ Widget buildDropdownField(String label, {bool isDisabled = false}) {
     ),
   );
 }
+

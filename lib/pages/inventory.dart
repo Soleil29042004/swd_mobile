@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:swd_mobile/components.dart';
+import 'package:swd_mobile/pages/home.dart';
+import 'package:swd_mobile/pages/profile.dart';
 
 // Data models aligned with backend StockResponse
 class StockResponse {
@@ -23,13 +25,6 @@ class InvetoryScreen extends StatefulWidget {
 
 class _InvetoryScreenState extends State<InvetoryScreen> {
   int _currentIndex = 1;
-
-  Map<String, bool> _drawerSectionState = {
-    "Home": false,
-    "Xuất-nhập ngoại": false,
-    "Xuất-nhập nội": false,
-    "Quản lý hàng hóa": false,
-  };
 
   bool isLoading = false;
   String errorMessage = '';
@@ -125,7 +120,7 @@ class _InvetoryScreenState extends State<InvetoryScreen> {
 
     return Scaffold(
       appBar: buildAppBar(context), // Use the function from components.dart
-      drawer: buildNavigationDrawer(context, _drawerSectionState, setState), // Use the drawer function
+      drawer: buildNavigationDrawer(context, {}, setState),
       body: Column(
         children: [
           _buildSearchBar(isSmallScreen),
@@ -142,22 +137,24 @@ class _InvetoryScreenState extends State<InvetoryScreen> {
           ),
         ],
       ),
-      bottomNavigationBar: buildBottomNavigationBar(_currentIndex, (index) {
-          switch (index) {
-          case 0:
-            Navigator.pushReplacementNamed(context, '/home');
-            break;
-          case 1:
-            break;
-          case 2:
-            Navigator.pushReplacementNamed(context, '/profile');
-            break;
-          case 3:
-            handleLogout(context);
-            break;
+      bottomNavigationBar: buildBottomNavigationBar(
+        context,
+        _currentIndex,
+            (index) {
+          setState(() {
+            _currentIndex = index;
+          });
+
+          // Handle navigation based on index
+          if (index == 0) {
+            Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage()));
+          } else if (index == 1) {
+          } else if (index == 2) {
+            Navigator.push(context, MaterialPageRoute(builder: (context) => ProfilePage()));
           }
-        }
-      )
+          // Note: index 3 (logout) is already handled in the buildBottomNavigationBar function
+        },
+      ),
     );
   }
 
