@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:swd_mobile/pages/home.dart';
 import 'package:swd_mobile/pages/register.dart';
-import 'package:swd_mobile/api/auth_service.dart'; // Create this file with the code above
+import 'package:swd_mobile/services/auth_service.dart'; // Create this file with the code above
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -14,7 +14,7 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-  final AuthService _authService = AuthService();
+  final AuthService _authService = AuthService(baseUrl: 'https://app-250312143530.azurewebsites.net/api');
   bool _isLoading = false;
   bool _rememberMe = false;
   String? _errorMessage;

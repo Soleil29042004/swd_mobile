@@ -1,32 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:swd_mobile/api/auth_service.dart';
-import 'package:swd_mobile/api/stockcheck_api.dart';
+import 'package:swd_mobile/pages/stock_check_status.dart';
+import 'package:swd_mobile/pages/stock_screen.dart';
+import 'package:swd_mobile/pages/transaction_status.dart';
+import 'package:swd_mobile/services/auth_service.dart';
 import 'package:swd_mobile/pages/import.dart';
 import 'package:swd_mobile/pages/login.dart';
 import 'package:swd_mobile/pages/home.dart';
 import 'package:swd_mobile/pages/export.dart';
 import 'package:swd_mobile/pages/inventory.dart';
-import 'package:swd_mobile/pages/stock_check.dart';
 
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-
-void navigateToStockCheck(BuildContext context) async {
-  final authService = AuthService();
-  final token = await authService.getToken() ?? '';
-
-  final stockCheckApiService = StockCheckApiService(
-    baseUrl: 'http://localhost:8080', // Use same base URL as AuthService
-    token: token,
-  );
-
-  Navigator.push(
-    context,
-    MaterialPageRoute(
-      builder: (context) => StockCheckMainScreen(apiService: stockCheckApiService),
-    ),
-  );
-}
 
 AppBar buildAppBar(BuildContext context) {
   return AppBar(
@@ -77,9 +61,10 @@ Drawer buildNavigationDrawer(BuildContext context, Map<String, bool> drawerSecti
         buildCollapsibleSection(context, "Xuất-nhập kho", Icons.store, [
           buildSubMenu("Phiếu xuất kho", Icons.upload, context),
           buildSubMenu("Phiếu nhập kho", Icons.download, context),
+          buildSubMenu("Xét duyệt phiếu", Icons.check, context),
         ], drawerSectionState, setStateCallback),
         buildCollapsibleSection(context, "Quản lý hàng hóa", Icons.warehouse, [
-          buildSubMenu("Thêm hàng hóa", Icons.upload, context),
+          buildSubMenu("Xét duyệt kiểm kho", Icons.check_box, context),
           buildSubMenu("Tìm hàng hóa", Icons.search, context),
           buildSubMenu("Kiểm kê", Icons.check, context),
         ], drawerSectionState, setStateCallback),
@@ -144,22 +129,39 @@ Widget buildSubMenu(String title, IconData icon, BuildContext context) {
         if (title == "Phiếu nhập kho") {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => const ImportPage()),
+            MaterialPageRoute(builder: (context) => const ImportTransactionScreen()),
           );
         }
         else if (title == 'Phiếu xuất kho'){
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => const ExportPage()),
+            MaterialPageRoute(builder: (context) => const ExportTransactionScreen()),
+          );
+        }
+        else if (title == 'Xét duyệt kiểm kho'){
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => StockCheckStatusScreen()),
           );
         }
         else if (title == 'Kiểm kê'){
-          navigateToStockCheck(context);
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => StockCheckListScreen()),
+          );
         }
         else if (title == 'Tìm hàng hóa'){
           Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => InvetoryScreen()),
+          );
+        }
+        else if (title == 'Xét duyệt phiếu'){
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const TransactionManagementScreen(),
+            ),
           );
         };
       },
@@ -190,13 +192,13 @@ BottomNavigationBar buildBottomNavigationBar(BuildContext context, int currentIn
 }
 
 void handleLogout(BuildContext context) async {
-  final authService = AuthService();
+  final authService = AuthService(baseUrl: 'https://app-250312143530.azurewebsites.net/api');
   final token = await authService.getToken() ?? '';
 
   // Call the logout API endpoint
   try {
     final response = await http.post(
-      Uri.parse('http://localhost:8080/auth/logout'),
+      Uri.parse('https://app-250312143530.azurewebsites.net/api/auth/logout'),
       headers: {
         'Content-Type': 'application/json',
       },
@@ -207,7 +209,7 @@ void handleLogout(BuildContext context) async {
 
     if (response.statusCode == 200) {
       // Clear local token
-      await authService.clearToken();
+      await authService.logout();
 
       // Navigate to login page
       Navigator.pushReplacement(

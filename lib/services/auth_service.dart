@@ -3,7 +3,10 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthService {
-  final String baseUrl = 'http://localhost:8080';
+  final String baseUrl;
+
+  // Constructor with baseUrl parameter
+  AuthService({required this.baseUrl});
 
   // Login method using the API
   Future<Map<String, dynamic>> login(String email, String password) async {
@@ -58,6 +61,7 @@ class AuthService {
         };
       }
     } catch (e) {
+      print("Login exception: ${e.toString()}");
       return {
         'success': false,
         'message': 'Connection error: ${e.toString()}',
@@ -84,6 +88,7 @@ class AuthService {
       }
       return false;
     } catch (e) {
+      print("Token validation error: ${e.toString()}");
       return false;
     }
   }
@@ -138,10 +143,17 @@ class AuthService {
     };
   }
 
-  Future<void> clearToken() async {
-    // Using shared preferences or secure storage
+  // Clear all user data on logout
+  Future<void> logout() async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.remove('auth_token');
+    await prefs.remove('token');
+    await prefs.remove('authenticated');
+    await prefs.remove('userCode');
+    await prefs.remove('email');
+    await prefs.remove('fullName');
+    await prefs.remove('userName');
+    await prefs.remove('roleId');
+    await prefs.remove('roleType');
+    await prefs.remove('roleName');
   }
-
 }

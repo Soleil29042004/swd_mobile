@@ -3,8 +3,8 @@ import 'dart:convert';
 import 'auth_service.dart';
 
 class HttpService {
-  final String baseUrl = 'http://localhost:8080';
-  final AuthService _authService = AuthService();
+  final String baseUrl = 'https://app-250312143530.azurewebsites.net/api';
+  final AuthService _authService = AuthService(baseUrl: 'https://app-250312143530.azurewebsites.net/api');
 
   // GET request with authentication
   Future<Map<String, dynamic>> get(String endpoint) async {
