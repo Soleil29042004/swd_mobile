@@ -101,6 +101,15 @@ fonts:
            weight: 700
          - asset: fonts/Roboto-Italic.ttf
            style: italic
+   - family: Times New Roman
+     fonts:
+         - asset: assets/fonts/times.ttf
+         - asset: assets/fonts/timesbd.ttf
+           weight: 700
+         - asset: assets/fonts/timesbi.ttf
+           style: italic
+         - asset: assets/fonts/timesi.ttf
+           style: italic
   #   - family: Trajan Pro
   #     fonts:
   #       - asset: fonts/TrajanPro.ttf

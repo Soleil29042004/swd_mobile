@@ -66,20 +66,21 @@ class StockCheckApi {
       );
 
       if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
-        // Add null checks for the data
+        // Decode UTF-8 explicitly
+        final jsonString = utf8.decode(response.bodyBytes);
+        final data = jsonDecode(jsonString);
+
         if (data == null) {
           return [];
         }
 
-        // Add null checks for the result field
         final result = data['result'] as List?;
         if (result == null) {
           return [];
         }
 
         return result
-            .where((item) => item != null) // Filter out null items
+            .where((item) => item != null)
             .map((item) => StockCheckNote.fromJson(item))
             .toList();
       } else {
@@ -195,23 +196,21 @@ class StockCheckNote {
 
   factory StockCheckNote.fromJson(Map<String, dynamic> json) {
     return StockCheckNote(
-      stockCheckNoteId: json['stockCheckNoteId'] ?? '',
-      date: json['date'] ?? '',
-      warehouseCode: json['warehouseCode'] ?? '',
-      warehouseName: json['warehouseName'] ?? '',
-      checkerName: json['checkerName'] ?? '',
-      stockCheckStatus: json['stockCheckStatus'] ?? '',
-      description: json['description'] ?? '',
-      stockCheckProducts: json['stockCheckProducts'] != null
-          ? (json['stockCheckProducts'] as List)
+      stockCheckNoteId: json['stockCheckNoteId'] as String? ?? '',
+      date: json['date'] as String? ?? '',
+      warehouseCode: json['warehouseCode'] as String? ?? '',
+      warehouseName: json['warehouseName'] as String? ?? '',
+      checkerName: json['checkerName'] as String? ?? '',
+      stockCheckStatus: json['stockCheckStatus'] as String? ?? '',
+      description: json['description'] as String? ?? '',
+      stockCheckProducts: (json['stockCheckProducts'] as List? ?? [])
           .where((item) => item != null)
           .map((item) => StockCheckProduct.fromJson(item))
-          .toList()
-          : [],
+          .toList(),
     );
   }
 
-  // Update toJson method to match the new structure
+    // Update toJson method to match the new structure
   Map<String, dynamic> toJson() {
     return {
       'stockCheckNoteId': stockCheckNoteId,
@@ -248,17 +247,15 @@ class StockCheckProduct {
   });
 
   factory StockCheckProduct.fromJson(Map<String, dynamic> json) {
-    if (json == null) return StockCheckProduct.empty();
-
     return StockCheckProduct(
-      productCode: json['productCode'],
-      productName: json['productName'],
-      lastQuantity: json['lastQuantity'] ?? 0,
-      totalImportQuantity: json['totalImportQuantity'] ?? 0,
-      totalExportQuantity: json['totalExportQuantity'] ?? 0,
-      expectedQuantity: json['expectedQuantity'] ?? 0,
-      actualQuantity: json['actualQuantity'] ?? 0,
-      difference: json['difference'] ?? 0,
+      productCode: json['productCode'] as String? ?? '',
+      productName: json['productName'] as String? ?? '',
+      lastQuantity: json['lastQuantity'] as int? ?? 0,
+      totalImportQuantity: json['totalImportQuantity'] as int? ?? 0,
+      totalExportQuantity: json['totalExportQuantity'] as int? ?? 0,
+      expectedQuantity: json['expectedQuantity'] as int? ?? 0,
+      actualQuantity: json['actualQuantity'] as int? ?? 0,
+      difference: json['difference'] as int? ?? 0,
     );
   }
 

@@ -129,9 +129,38 @@ class _ExportTransactionScreenState extends State<ExportTransactionScreen> {
         _isLoading = false;
       });
 
+      // Improved error message extraction
+      String errorMessage = 'An unknown error occurred';
+      try {
+        // Convert exception to string
+        String errorString = e.toString();
+
+        // Try multiple regex patterns to extract message
+        final patterns = [
+          r'"message"\s*:\s*"(.*?)"',  // Matches "message": "error text"
+          r"message':'(.*?)'",          // Matches message':'error text'
+        ];
+
+        for (var pattern in patterns) {
+          final match = RegExp(pattern).firstMatch(errorString);
+          if (match != null && match.group(1) != null) {
+            errorMessage = match.group(1)!;
+            break;
+          }
+        }
+
+        // Fallback to entire error string if no specific message found
+        if (errorMessage == 'An unknown error occurred') {
+          errorMessage = errorString;
+        }
+      } catch (_) {
+        // If anything goes wrong during error parsing, use default message
+        errorMessage = 'An unknown error occurred';
+      }
+
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Error creating export transaction: ${e.toString()}'),
+          content: Text('Error: $errorMessage'),
           backgroundColor: Colors.red,
         ),
       );

@@ -7,7 +7,6 @@ import 'package:flutter/foundation.dart';
 import 'package:swd_mobile/pages/notification.dart';
 import 'package:swd_mobile/pages/profile.dart';
 import 'package:swd_mobile/pages/inventory.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 // Conditional import for web only
 // This ensures dart:html is only imported when targeting web platforms
@@ -52,7 +51,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
-          fontFamily: 'system',
+          fontFamily: 'Times New Roman',
         ),
         home: LoginPage(),
         navigatorKey: navigatorKey,

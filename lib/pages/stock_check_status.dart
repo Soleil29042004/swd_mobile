@@ -324,7 +324,6 @@ class _StockCheckStatusScreenState extends State<StockCheckStatusScreen> {
                 SizedBox(height: 8),
                 Text(
                   'Products (${note.stockCheckProducts.length}):',
-                  style: TextStyle(fontWeight: FontWeight.bold),
                 ),
                 SizedBox(height: 4),
                 _buildProductsTable(note.stockCheckProducts),
