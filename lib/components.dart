@@ -194,7 +194,7 @@ Widget buildSubMenu(String title, IconData icon, BuildContext context) {
         else if (title == 'Tìm hàng hóa'){
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => InvetoryScreen()),
+            MaterialPageRoute(builder: (context) => InventoryScreen()),
           );
         }
         else if (title == 'Xét duyệt phiếu'){

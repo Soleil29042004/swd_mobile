@@ -102,7 +102,7 @@ class _ProfilePageState extends State<ProfilePage> {
           if (index == 0) {
             Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage()));
           } else if (index == 1) {
-            Navigator.push(context, MaterialPageRoute(builder: (context) => InvetoryScreen()));
+            Navigator.push(context, MaterialPageRoute(builder: (context) => InventoryScreen()));
           } else if (index == 2) {
             // Already on profile page
           }

@@ -1,115 +1,49 @@
 import 'package:flutter/material.dart';
-import 'package:swd_mobile/components.dart';
+import 'package:swd_mobile/services/location_service.dart'; // Import the location service
+import 'package:swd_mobile/components.dart'; // Assuming you have a components file for shared UI elements
 import 'package:swd_mobile/pages/home.dart';
 import 'package:swd_mobile/pages/profile.dart';
 
-// Data models aligned with backend StockResponse
-class StockResponse {
-  final String stockCode;
-  final String productCode;
-  final String productName;
-  final int quantity;
-
-  StockResponse({
-    required this.stockCode,
-    required this.productCode,
-    required this.productName,
-    required this.quantity,
-  });
-}
-
-class InvetoryScreen extends StatefulWidget {
+class InventoryScreen extends StatefulWidget {
   @override
-  _InvetoryScreenState createState() => _InvetoryScreenState();
+  _InventoryScreenState createState() => _InventoryScreenState();
 }
 
-class _InvetoryScreenState extends State<InvetoryScreen> {
+class _InventoryScreenState extends State<InventoryScreen> {
   int _currentIndex = 1;
 
   bool isLoading = false;
   String errorMessage = '';
   final TextEditingController _productCodeController = TextEditingController();
-  List<StockResponse> allStocks = [];
   StockResponse? selectedStock;
   bool hasSearched = false;
 
-  // Mock data to simulate backend response
-  final List<StockResponse> mockStocks = [
-    StockResponse(
-      stockCode: "STK-001",
-      productCode: "P-001",
-      productName: "Product One",
-      quantity: 98,
-    ),
-    StockResponse(
-      stockCode: "STK-002",
-      productCode: "P-002",
-      productName: "Product Two",
-      quantity: 52,
-    ),
-    StockResponse(
-      stockCode: "STK-003",
-      productCode: "P-003",
-      productName: "Product Three",
-      quantity: 75,
-    ),
-    StockResponse(
-      stockCode: "STK-004",
-      productCode: "P-004",
-      productName: "Product Four",
-      quantity: 115,
-    ),
-    StockResponse(
-      stockCode: "STK-005",
-      productCode: "P-005",
-      productName: "Product Five",
-      quantity: 80,
-    ),
-  ];
+  // Create an instance of ProductLocationsService
+  final ProductLocationsService _productLocationsService = ProductLocationsService();
 
-  @override
-  void initState() {
-    super.initState();
-    // Initialize with mock data for now
-    allStocks = mockStocks;
-  }
-
-  // Simulate fetching stock by product code
-  void getStockByProductCode(String productCode) {
+  // Fetch stock by product code from API
+  void getStockByProductCode(String productCode) async {
     setState(() {
       isLoading = true;
       errorMessage = '';
     });
 
-    // Simulate network delay
-    Future.delayed(Duration(seconds: 1), () {
-      final stock = mockStocks.firstWhere(
-            (s) => s.productCode == productCode,
-        orElse: () => StockResponse(
-            stockCode: "",
-            productCode: "",
-            productName: "",
-            quantity: 0
-        ),
-      );
+    try {
+      final stock = await _productLocationsService.fetchProductLocations(productCode);
 
       setState(() {
         isLoading = false;
-        if (stock.stockCode.isNotEmpty) {
-          selectedStock = stock;
-        } else {
-          errorMessage = 'No stock found for product code: $productCode';
-          selectedStock = null;
-        }
+        selectedStock = stock;
         hasSearched = true;
       });
-    });
-  }
-
-  @override
-  void dispose() {
-    _productCodeController.dispose();
-    super.dispose();
+    } catch (e) {
+      setState(() {
+        isLoading = false;
+        errorMessage = e.toString();
+        selectedStock = null;
+        hasSearched = true;
+      });
+    }
   }
 
   @override
@@ -119,7 +53,7 @@ class _InvetoryScreenState extends State<InvetoryScreen> {
     final isSmallScreen = screenSize.width < 600;
 
     return Scaffold(
-      appBar: buildAppBar(context), // Use the function from components.dart
+      appBar: buildAppBar(context),
       drawer: buildNavigationDrawer(context, {}, setState),
       body: Column(
         children: [
@@ -148,7 +82,6 @@ class _InvetoryScreenState extends State<InvetoryScreen> {
           // Handle navigation based on index
           if (index == 0) {
             Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage()));
-          } else if (index == 1) {
           } else if (index == 2) {
             Navigator.push(context, MaterialPageRoute(builder: (context) => ProfilePage()));
           }
@@ -168,7 +101,7 @@ class _InvetoryScreenState extends State<InvetoryScreen> {
             controller: _productCodeController,
             decoration: InputDecoration(
               labelText: 'Product Code',
-              hintText: 'Enter product code (e.g. P-001)',
+              hintText: 'Enter product code (e.g. PR001)',
               border: OutlineInputBorder(),
               contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
             ),
@@ -221,100 +154,11 @@ class _InvetoryScreenState extends State<InvetoryScreen> {
   }
 
   Widget _buildAllStocksContent(bool isSmallScreen) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: EdgeInsets.all(isSmallScreen ? 8 : 16),
-          child: Text(
-            'All Stocks',
-            style: TextStyle(fontSize: isSmallScreen ? 16 : 18, fontWeight: FontWeight.bold),
-          ),
-        ),
-        Expanded(
-          child: allStocks.isEmpty
-              ? Center(child: Text('No stocks available'))
-              : isSmallScreen
-              ? _buildStocksList()
-              : _buildStocksTable(),
-        ),
-      ],
-    );
-  }
-
-  // Table view for larger screens
-  Widget _buildStocksTable() {
-    return SingleChildScrollView(
-      scrollDirection: Axis.vertical,
-      child: SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        child: DataTable(
-          columns: [
-            DataColumn(label: Text('Stock Code')),
-            DataColumn(label: Text('Product Code')),
-            DataColumn(label: Text('Product Name')),
-            DataColumn(label: Text('Quantity'), numeric: true),
-          ],
-          rows: allStocks.map((stock) {
-            return DataRow(
-              cells: [
-                DataCell(Text(stock.stockCode)),
-                DataCell(Text(stock.productCode)),
-                DataCell(Text(stock.productName)),
-                DataCell(Text('${stock.quantity}')),
-              ],
-              onSelectChanged: (selected) {
-                if (selected == true) {
-                  setState(() {
-                    selectedStock = stock;
-                    hasSearched = true;
-                    _productCodeController.text = stock.productCode;
-                  });
-                }
-              },
-            );
-          }).toList(),
-        ),
+    return Center(
+      child: Text(
+        'Enter a product code to search for stock locations',
+        style: TextStyle(fontSize: 16, color: Colors.grey),
       ),
-    );
-  }
-
-  // Card list view for smaller screens
-  Widget _buildStocksList() {
-    return ListView.builder(
-      itemCount: allStocks.length,
-      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-      itemBuilder: (context, index) {
-        final stock = allStocks[index];
-        return Card(
-          margin: EdgeInsets.symmetric(vertical: 4),
-          child: ListTile(
-            title: Text(
-              stock.productName,
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
-            subtitle: Text('${stock.productCode} | Stock: ${stock.stockCode}'),
-            trailing: Container(
-              padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-              decoration: BoxDecoration(
-                color: stock.quantity > 0 ? Colors.green : Colors.red,
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Text(
-                '${stock.quantity}',
-                style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-              ),
-            ),
-            onTap: () {
-              setState(() {
-                selectedStock = stock;
-                hasSearched = true;
-                _productCodeController.text = stock.productCode;
-              });
-            },
-          ),
-        );
-      },
     );
   }
 
@@ -326,6 +170,8 @@ class _InvetoryScreenState extends State<InvetoryScreen> {
         children: [
           _buildHeaderCard(isSmallScreen),
           SizedBox(height: isSmallScreen ? 8 : 16),
+          _buildWarehousesList(isSmallScreen),
+          SizedBox(height: isSmallScreen ? 8 : 16),
           SizedBox(
             width: isSmallScreen ? double.infinity : null,
             child: ElevatedButton(
@@ -336,7 +182,7 @@ class _InvetoryScreenState extends State<InvetoryScreen> {
                   _productCodeController.clear();
                 });
               },
-              child: Text('Back to All Stocks'),
+              child: Text('Search Another Product'),
             ),
           ),
         ],
@@ -353,7 +199,7 @@ class _InvetoryScreenState extends State<InvetoryScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Stock Details',
+              'Product Details',
               style: TextStyle(
                   fontSize: isSmallScreen ? 16 : 18,
                   fontWeight: FontWeight.bold
@@ -366,21 +212,19 @@ class _InvetoryScreenState extends State<InvetoryScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('Stock Code: ${selectedStock!.stockCode}'),
-                      SizedBox(height: 8),
                       Text('Product Code: ${selectedStock!.productCode}'),
                       SizedBox(height: 8),
                       Text('Product Name: ${selectedStock!.productName}'),
                       SizedBox(height: 8),
                       Row(
                         children: [
-                          Text('Quantity: ', style: TextStyle(fontWeight: FontWeight.bold)),
+                          Text('Total Quantity: ', style: TextStyle(fontWeight: FontWeight.bold)),
                           Text(
-                            '${selectedStock!.quantity}',
+                            '${selectedStock!.totalQuantity}',
                             style: TextStyle(
                               fontSize: isSmallScreen ? 14 : 16,
                               fontWeight: FontWeight.bold,
-                              color: selectedStock!.quantity > 0 ? Colors.green : Colors.red,
+                              color: selectedStock!.totalQuantity > 0 ? Colors.green : Colors.red,
                             ),
                           ),
                         ],
@@ -394,5 +238,52 @@ class _InvetoryScreenState extends State<InvetoryScreen> {
         ),
       ),
     );
+  }
+
+  Widget _buildWarehousesList(bool isSmallScreen) {
+    return Card(
+      elevation: 4,
+      child: Padding(
+        padding: EdgeInsets.all(isSmallScreen ? 12 : 16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Warehouse Locations',
+              style: TextStyle(
+                  fontSize: isSmallScreen ? 16 : 18,
+                  fontWeight: FontWeight.bold
+              ),
+            ),
+            SizedBox(height: isSmallScreen ? 12 : 16),
+            ListView.builder(
+              shrinkWrap: true,
+              physics: NeverScrollableScrollPhysics(),
+              itemCount: selectedStock!.warehouses.length,
+              itemBuilder: (context, index) {
+                final warehouse = selectedStock!.warehouses[index];
+                return ListTile(
+                  title: Text(warehouse.warehouseName),
+                  subtitle: Text('Warehouse Code: ${warehouse.warehouseCode}'),
+                  trailing: Text(
+                    'Quantity: ${warehouse.totalQuantity}',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: warehouse.totalQuantity > 0 ? Colors.green : Colors.red,
+                    ),
+                  ),
+                );
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  @override
+  void dispose() {
+    _productCodeController.dispose();
+    super.dispose();
   }
 }

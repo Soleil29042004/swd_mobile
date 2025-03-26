@@ -60,7 +60,7 @@ class MyApp extends StatelessWidget {
           '/login': (context) => LoginPage(),
           '/home': (context) => HomePage(),
           '/profile': (context) => ProfilePage(),
-          '/search': (context) => InvetoryScreen(),
+          '/search': (context) => InventoryScreen(),
         }
     );
   }

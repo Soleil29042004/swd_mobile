@@ -116,7 +116,7 @@ class _HomePageState extends State<HomePage> {
           if (index == 0) {
             // Already on home, do nothing
           } else if (index == 1) {
-            Navigator.push(context, MaterialPageRoute(builder: (context) => InvetoryScreen()));
+            Navigator.push(context, MaterialPageRoute(builder: (context) => InventoryScreen()));
           } else if (index == 2) {
             Navigator.push(context, MaterialPageRoute(builder: (context) => ProfilePage()));
           }
