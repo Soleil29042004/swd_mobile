@@ -104,7 +104,7 @@ class _StockCheckStatusScreenState extends State<StockCheckStatusScreen> {
       _showSuccessSnackBar('Stock check approved successfully');
       await _loadStockCheckNotes();
     } catch (e) {
-      _showErrorSnackBar('Failed to approve stock check: $e');
+      _showErrorSnackBar('You are not authorize to do this');
     } finally {
       setState(() {
         _isLoading = false;

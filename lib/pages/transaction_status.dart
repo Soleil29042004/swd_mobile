@@ -60,7 +60,7 @@ class _TransactionManagementScreenState extends State<TransactionManagementScree
       });
     } catch (e) {
       setState(() {
-        _errorMessage = 'Failed to load transactions: $e';
+        _errorMessage = 'You are not authorize for this page';
         _isLoading = false;
       });
     }

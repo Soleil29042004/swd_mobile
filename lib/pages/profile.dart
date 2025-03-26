@@ -297,7 +297,7 @@ class _ProfilePageState extends State<ProfilePage> {
           ),
           const SizedBox(height: 16),
           Text(
-            userProfile!.fullName,
+            utf8.decode(userProfile!.fullName.codeUnits),
             style: const TextStyle(
               fontSize: 24,
               fontWeight: FontWeight.bold,
@@ -356,7 +356,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 const SizedBox(width: 8),
                 Text(
                   title,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
                     color: Colors.blue,
@@ -391,7 +391,7 @@ class _ProfilePageState extends State<ProfilePage> {
           SizedBox(
             width: 120,
             child: Text(
-              label,
+              utf8.decode(label.codeUnits),
               style: TextStyle(
                 fontWeight: FontWeight.w500,
                 color: Colors.grey.shade700,
@@ -400,7 +400,7 @@ class _ProfilePageState extends State<ProfilePage> {
           ),
           Expanded(
             child: Text(
-              value,
+              utf8.decode(value.codeUnits),
               style: const TextStyle(
                 fontWeight: FontWeight.w500,
               ),
@@ -440,7 +440,7 @@ class UserProfile {
       userCode: json['userCode'] ?? '',
       userName: json['userName'] ?? '',
       email: json['email'] ?? '',
-      fullName: json['fullName'] ?? '',
+      fullName: json['fullName'] as String? ?? '',
       role: json['role'] != null ? Role.fromJson(json['role']) : Role(roleId: '', roleType: '', roleName: ''),
       status: json['status'],
       warehouseCode: json['warehouseCode'],

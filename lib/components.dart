@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:swd_mobile/pages/stock_check_status.dart';
 import 'package:swd_mobile/pages/stock_screen.dart';
 import 'package:swd_mobile/pages/transaction_status.dart';
@@ -79,14 +80,58 @@ Drawer buildNavigationDrawer(BuildContext context, Map<String, bool> drawerSecti
 }
 
 UserAccountsDrawerHeader buildUserHeader() {
-  return const UserAccountsDrawerHeader(
-    accountName: Text("Jade Hwang"),
+  return UserAccountsDrawerHeader(
+    accountName: FutureBuilder<String>(
+      future: _fetchUserFullName(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Text("Loading...");
+        }
+        return Text(
+          snapshot.data ?? "Staff Member",
+          style: const TextStyle(color: Colors.white),
+        );
+      },
+    ),
     accountEmail: null,
-    currentAccountPicture: CircleAvatar(
+    currentAccountPicture: const CircleAvatar(
       backgroundImage: AssetImage("assets/icons/profile.jpg"),
     ),
-    decoration: BoxDecoration(color: Colors.blueAccent),
+    decoration: const BoxDecoration(color: Colors.blueAccent),
   );
+}
+
+Future<String> _fetchUserFullName() async {
+  try {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final String? token = prefs.getString('token');
+
+    if (token == null) {
+      return "Staff Member";
+    }
+
+    final response = await http.get(
+      Uri.parse('https://app-250312143530.azurewebsites.net/api/users/info'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> responseData = json.decode(response.body);
+
+      if (responseData['result'] != null) {
+        // Use UTF-8 decoding to handle special characters
+        String fullName = responseData['result']['fullName'] ?? "Staff Member";
+        return utf8.decode(fullName.codeUnits);
+      }
+    }
+
+    return "Staff Member";
+  } catch (e) {
+    return "Staff Member";
+  }
 }
 
 ListTile buildDrawerItem(BuildContext context, String title, IconData icon, int index, Function setStateCallback) {
