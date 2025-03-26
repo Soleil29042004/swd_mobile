@@ -15,10 +15,6 @@ import 'package:http/http.dart' as http;
 
 AppBar buildAppBar(BuildContext context) {
   return AppBar(
-    title: const Text(
-      'Staff',
-      style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
-    ),
     backgroundColor: Colors.blueAccent,
     centerTitle: true,
     leading: Builder(

@@ -328,7 +328,6 @@ class StockTransactionService {
     }
   }
 
-  // Additional methods to add to the existing StockTransactionService class:
 
   // Cancel a transaction
   Future<StockExchangeResponse> cancelTransaction(String transactionId) async {

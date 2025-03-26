@@ -196,7 +196,8 @@ class _TransactionManagementScreenState extends State<TransactionManagementScree
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(message)),
       );
-    } catch (e) {
+    }
+    catch (e) {
       setState(() {
         _errorMessage = 'Failed to update transaction: $e';
         _isProcessingAction = false;
@@ -204,6 +205,40 @@ class _TransactionManagementScreenState extends State<TransactionManagementScree
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Failed to update transaction: $e')),
+      );
+    }
+  }
+
+  Future<void> _cancelTransaction() async {
+    if (_selectedTransaction == null) return;
+
+    setState(() {
+      _isProcessingAction = true;
+    });
+
+    try {
+      final updatedTransaction = await _transactionService.cancelTransaction(
+        _selectedTransaction!.transactionId,
+      );
+
+      _updateTransactionInLists(updatedTransaction);
+
+      setState(() {
+        _selectedTransaction = updatedTransaction;
+        _isProcessingAction = false;
+      });
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Transaction cancelled successfully')),
+      );
+    } catch (e) {
+      setState(() {
+        _errorMessage = 'Failed to cancel transaction: $e';
+        _isProcessingAction = false;
+      });
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to cancel transaction: $e')),
       );
     }
   }
@@ -534,7 +569,7 @@ class _TransactionManagementScreenState extends State<TransactionManagementScree
           ),
           const SizedBox(height: 8),
           ElevatedButton(
-            onPressed: () => _finalizeTransaction(isFinished: false),
+            onPressed: () => _cancelTransaction(),
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.red,
               minimumSize: const Size.fromHeight(50),
